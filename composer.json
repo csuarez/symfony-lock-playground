@@ -1,0 +1,10 @@
+{
+    "minimum-stability" : "dev",
+    "prefer-stable" : true,
+    "require": {
+        "symfony/lock": "^3.3@dev",
+        "mnapoli/silly": "^1.5",
+        "predis/predis": "^1.1",
+        "monolog/monolog": "^1.22"
+    }
+}
