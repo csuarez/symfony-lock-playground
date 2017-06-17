@@ -29,9 +29,8 @@ $app->command('simple:nolock', function (OutputInterface $output, Factory $facto
     $resource = new UnsafeSharedResource('very-important-thing');
 
     do {
-        $counter = $resource->read();
-        $output->writeln($counter);
-        $resource->write(++$counter);
+        $value = $resource->increase();
+        $output->writeln($value);
     } while(true);
 });
 
@@ -43,9 +42,8 @@ $app->command('simple:lock', function (OutputInterface $output, Factory $factory
     do {
         $lock->acquire(true);
         try {
-            $counter = $resource->read();
-            $output->writeln($counter);
-            $resource->write(++$counter);
+            $value = $resource->increase();
+            $output->writeln($value);
         } finally {
             $lock->release();
         }

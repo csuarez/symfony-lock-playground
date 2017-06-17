@@ -21,6 +21,13 @@ class UnsafeSharedResource
         return intval(file_get_contents($this->file));
     }
 
+    public function increase()
+    {
+        $value = $this->read();
+        $this->write(++$value);
+        return $value;
+    }
+
     public function reset()
     {
         $this->write(0);
