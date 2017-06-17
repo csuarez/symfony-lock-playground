@@ -19,9 +19,14 @@ $app = new LockApplication();
 
 $app->addStore('flock', new FlockStore(sys_get_temp_dir()));
 
-$app->command('simple:nolock', function (OutputInterface $output, Factory $factory) {
-    $resource = new UnsafeSharedResource('simple:lock');
+$app->command('resource:reset [resource]', function ($output, $factory, $input) {
+    $resourceName = $input->getArgument('resource');
+    $resource = new UnsafeSharedResource($resourceName);
     $resource->reset();
+});
+
+$app->command('simple:nolock', function (OutputInterface $output, Factory $factory) {
+    $resource = new UnsafeSharedResource('very-important-thing');
 
     do {
         $counter = $resource->read();
@@ -31,8 +36,7 @@ $app->command('simple:nolock', function (OutputInterface $output, Factory $facto
 });
 
 $app->command('simple:lock', function (OutputInterface $output, Factory $factory) {
-    $resource = new UnsafeSharedResource('simple:lock');
-    $resource->reset();
+    $resource = new UnsafeSharedResource('very-important-thing');
 
     $lock = $factory->createLock('simple:lock');
 
