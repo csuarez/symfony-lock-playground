@@ -1,0 +1,10 @@
+apps:
+  - name        : simple:nolock
+    script      : cli.php
+    args        :
+      - simple:nolock
+      - flock
+    instances   : 4
+    exec_mode   : fork
+    cwd         : /app
+    interpreter : /usr/bin/php
