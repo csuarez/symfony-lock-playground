@@ -28,6 +28,13 @@ class UnsafeSharedResource
         return $value;
     }
 
+    public function decrease()
+    {
+        $value = $this->read();
+        $this->write(--$value);
+        return $value;
+    }
+
     public function reset()
     {
         $this->write(0);

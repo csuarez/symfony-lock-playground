@@ -1,0 +1,19 @@
+apps:
+  - name        : rw:reader
+    script      : cli.php
+    args        :
+      - rw:reader
+      - semaphore
+    instances   : 10
+    exec_mode   : fork
+    cwd         : /app
+    interpreter : /usr/bin/php
+  - name        : rw:writer
+    script      : cli.php
+    args        :
+      - rw:writer
+      - semaphore
+    instances   : 1
+    exec_mode   : fork
+    cwd         : /app
+    interpreter : /usr/bin/php

@@ -13,13 +13,25 @@
         ],
         "run:simple-nolock": [
             "docker-compose exec -T app pm2 delete all || true",
-            "docker-compose exec -T app php run /app/cli.php resource:reset very-important-thing",
+            "docker-compose exec -T app php /app/cli.php resource:reset very-important-thing",
             "docker-compose exec -T app pm2 start /app/pm2/simple-nolock.yml"
         ],
         "run:simple-lock": [
             "docker-compose exec -T app pm2 delete all || true",
-            "docker-compose exec -T app php run /app/cli.php resource:reset very-important-thing",
+            "docker-compose exec -T app php /app/cli.php resource:reset very-important-thing",
             "docker-compose exec -T app pm2 start /app/pm2/simple-lock.yml"
+        ],
+        "run:barrier": [
+            "docker-compose exec -T app pm2 delete all || true",
+            "docker-compose exec -T app php /app/cli.php resource:reset barrier",
+            "docker-compose exec -T app php /app/cli.php resource:reset processes",
+            "docker-compose exec -T app pm2 start /app/pm2/barrier.yml"
+        ],
+        "run:rw": [
+            "docker-compose exec -T app pm2 delete all || true",
+            "docker-compose exec -T app php /app/cli.php resource:reset very-important-thing",
+            "docker-compose exec -T app php /app/cli.php resource:reset readers",
+            "docker-compose exec -T app pm2 start /app/pm2/read-write.yml"
         ]
     }
 }

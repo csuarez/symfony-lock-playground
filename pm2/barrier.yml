@@ -1,0 +1,10 @@
+apps:
+  - name        : barrier
+    script      : cli.php
+    args        :
+      - barrier
+      - flock
+    instances   : 4
+    exec_mode   : fork
+    cwd         : /app
+    interpreter : /usr/bin/php
