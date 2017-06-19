@@ -43,10 +43,33 @@ $app->command('simple:nolock', function (OutputInterface $output, Factory $facto
 $app->command('simple:lock', function (OutputInterface $output, Factory $factory) {
     $resource = new UnsafeSharedResource('very-important-thing');
 
-    $lock = $factory->createLock('simple:lock');
+    $lock = $factory->createLock('simple:lock', 10);
 
     do {
         $lock->acquire(true);
+        try {
+            $value = $resource->increase();
+            $output->writeln($value);
+        } finally {
+            $lock->release();
+        }
+    } while(true);
+});
+
+
+
+$app->command('simple:distlockerror', function (OutputInterface $output, Factory $factory) {
+    $resource = new UnsafeSharedResource('very-important-thing');
+
+    $lock = $factory->createLock('simple:lock', 10);
+
+    do {
+        $lock->acquire(true);
+
+        if ((rand(0, 1000) % 1000) === 0) {
+            throw new \Exception('bye bye!');
+        }
+
         try {
             $value = $resource->increase();
             $output->writeln($value);
