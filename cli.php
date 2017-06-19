@@ -67,16 +67,15 @@ $app->command('barrier', function (OutputInterface $output, Factory $factory) {
 
     do {
         $processesCount = 0;
-        $iAmFirstProcess = false;
 
         $counterLock->acquire(true);
         try {
             $output->writeln("Waiting!!");
-            $processNumber = $processes->increase();
-            if ($processNumber == 1) {
+            $processesCount = $processes->increase();
+            if ($processesCount == 1) {
                 $barrierLock->acquire(true);
                 try {
-                    $barrierFlag->reset();
+                    $barrierFlag->write(0);
                 } finally {
                     $barrierLock->release();
                 }
@@ -94,8 +93,8 @@ $app->command('barrier', function (OutputInterface $output, Factory $factory) {
                     $barrierLock->acquire(true);
                     try {
                         $output->writeln("----------");
-                        $barrierFlag->increase();
-                        $processes->reset();
+                        $barrierFlag->write(1);
+                        $processes->write(0);
                     } finally {
                         $barrierLock->release();
                     }
