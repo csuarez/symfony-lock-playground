@@ -122,7 +122,6 @@ $app->command('rw:reader', function (OutputInterface $output, Factory $factory) 
     do {
         $readLock = $factory->createLock('reader');
         $writeLock = $factory->createLock('writer');
-
         // begin read
         $readLock->acquire(true);
         $readers = $readersStore->increase();
@@ -139,12 +138,12 @@ $app->command('rw:reader', function (OutputInterface $output, Factory $factory) 
         // end read
         $readLock->acquire(true);
         $readers = $readersStore->decrease();
-        //$output->writeln(">>>> readers (end): $readers");
+
         if ($readers == 0) {
             $writeLock->release();
         }
         $readLock->release();
-        sleep(rand(1, 5));
+        sleep(rand(1,2));
     } while (true);
 });
 
@@ -157,10 +156,10 @@ $app->command('rw:writer', function (OutputInterface $output, Factory $factory) 
         //begin write
         $writeLock->acquire(true);
         $output->writeln('Start to write...');
-        
+
         //write
         $resource->increase();
-        sleep(5);
+        sleep(rand(1,5));
 
         //end write
         $output->writeln('Write finishes!');

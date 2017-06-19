@@ -4,7 +4,7 @@ apps:
     args        :
       - rw:reader
       - semaphore
-    instances   : 10
+    instances   : 4
     exec_mode   : fork
     cwd         : /app
     interpreter : /usr/bin/php
