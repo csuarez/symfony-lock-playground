@@ -8,6 +8,7 @@ use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\Store\SemaphoreStore;
 use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\Store\RedisStore;
+use Symfony\Component\Lock\Store\MemcachedStore;
 use Symfony\Component\Lock\Store\RetryTillSaveStore;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -21,9 +22,13 @@ $redisConn = new \Predis\Client(
     'tcp://redis:6379'
 );
 
+$memcachedConn = new \Memcached;
+$memcachedConn->addServer('memcached', 11211);
+
 $app->addStore('flock', new FlockStore(sys_get_temp_dir()));
 $app->addStore('semaphore', new SemaphoreStore());
 $app->addStore('redis', new RetryTillSaveStore(new RedisStore($redisConn)));
+$app->addStore('memcached', new RetryTillSaveStore(new MemcachedStore($memcachedConn)));
 
 $app->command('resource:reset [resource]', function ($output, $factory, $input) {
     $resourceName = $input->getArgument('resource');
