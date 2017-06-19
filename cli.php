@@ -17,8 +17,13 @@ use Simple\SHM\Block;
 
 $app = new LockApplication();
 
+$redisConn = new \Predis\Client(
+    'tcp://redis:6379'
+);
+
 $app->addStore('flock', new FlockStore(sys_get_temp_dir()));
 $app->addStore('semaphore', new SemaphoreStore());
+$app->addStore('redis', new RetryTillSaveStore(new RedisStore($redisConn)));
 
 $app->command('resource:reset [resource]', function ($output, $factory, $input) {
     $resourceName = $input->getArgument('resource');
