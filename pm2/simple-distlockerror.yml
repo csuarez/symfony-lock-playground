@@ -1,0 +1,11 @@
+apps:
+  - name         : simple:distlockerror
+    script       : cli.php
+    args         :
+      - simple:distlockerror
+      - redis
+    instances    : 10
+    exec_mode    : fork
+    cwd          : /app
+    interpreter  : /usr/bin/php
+    max_restarts : 0
