@@ -20,30 +20,43 @@ use Simple\SHM\Block;
 
 $app = new LockApplication();
 
-$redisConn = new \Predis\Client(
-    'tcp://redis:6379'
-);
+$redisConns = [];
+$redisStores = [];
 
-$redisConn2 = new \Predis\Client(
-    'tcp://redis2:6379'
-);
+$redisConn = new \Predis\Client('tcp://redis:6379');
+try {
+    $redisConn->connect();
+    $redisStores[] = new RedisStore($redisConn);
+} catch (\Exception $e) {}
 
-$redisConn3 = new \Predis\Client(
-    'tcp://redis3:6379'
-);
+$redisConn2 = new \Predis\Client('tcp://redis2:6379');
+try {
+    $redisConn2->connect();
+    $redisStores[] = new RedisStore($redisConn2);
+} catch (\Exception $e) {}
+
+$redisConn3 = new \Predis\Client('tcp://redis3:6379');
+try {
+    $redisConn3->connect();
+    $redisStores[] = new RedisStore($redisConn3);
+} catch (\Exception $e) {}
+
 
 $memcachedConn = new \Memcached;
 $memcachedConn->addServer('memcached', 11211);
 
 $app->addStore('flock', new FlockStore(sys_get_temp_dir()));
 $app->addStore('semaphore', new SemaphoreStore());
-$app->addStore('redis', new RetryTillSaveStore(new RedisStore($redisConn)));
+
+$app->addStore('redis', new RetryTillSaveStore(
+    new RedisStore($redisConn)
+));
+
 $app->addStore('memcached', new RetryTillSaveStore(new MemcachedStore($memcachedConn)));
-$app->addStore('combined', new RetryTillSaveStore(new CombinedStore([
-    new RedisStore($redisConn),
-    new RedisStore($redisConn2),
-    new RedisStore($redisConn3)
-], new ConsensusStrategy())));
+$app->addStore('combined', new RetryTillSaveStore(new CombinedStore(
+    $redisStores,
+    new ConsensusStrategy())
+));
 
 $app->command('resource:reset [resource]', function ($output, $factory, $input) {
     $resourceName = $input->getArgument('resource');
