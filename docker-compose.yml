@@ -9,5 +9,9 @@ services:
       - .:/app/
   redis:
     image: redis
+  redis2:
+    image: redis
+  redis3:
+    image: redis
   memcached:
     image: memcached

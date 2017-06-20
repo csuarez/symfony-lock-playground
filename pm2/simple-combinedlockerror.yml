@@ -1,0 +1,11 @@
+apps:
+  - name         : simple:combinedlockerror
+    script       : cli.php
+    args         :
+      - simple:distlockerror
+      - combined
+    instances    : 10
+    exec_mode    : fork
+    cwd          : /app
+    interpreter  : /usr/bin/php
+    max_restarts : 0

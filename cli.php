@@ -10,6 +10,8 @@ use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\Store\RedisStore;
 use Symfony\Component\Lock\Store\MemcachedStore;
 use Symfony\Component\Lock\Store\RetryTillSaveStore;
+use Symfony\Component\Lock\Store\CombinedStore;
+use Symfony\Component\Lock\Strategy\ConsensusStrategy;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use LockExamples\Cli\Application as LockApplication;
@@ -22,6 +24,14 @@ $redisConn = new \Predis\Client(
     'tcp://redis:6379'
 );
 
+$redisConn2 = new \Predis\Client(
+    'tcp://redis2:6379'
+);
+
+$redisConn3 = new \Predis\Client(
+    'tcp://redis3:6379'
+);
+
 $memcachedConn = new \Memcached;
 $memcachedConn->addServer('memcached', 11211);
 
@@ -29,6 +39,11 @@ $app->addStore('flock', new FlockStore(sys_get_temp_dir()));
 $app->addStore('semaphore', new SemaphoreStore());
 $app->addStore('redis', new RetryTillSaveStore(new RedisStore($redisConn)));
 $app->addStore('memcached', new RetryTillSaveStore(new MemcachedStore($memcachedConn)));
+$app->addStore('combined', new RetryTillSaveStore(new CombinedStore([
+    new RedisStore($redisConn),
+    new RedisStore($redisConn2),
+    new RedisStore($redisConn3)
+], new ConsensusStrategy())));
 
 $app->command('resource:reset [resource]', function ($output, $factory, $input) {
     $resourceName = $input->getArgument('resource');
