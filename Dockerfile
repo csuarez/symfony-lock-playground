@@ -10,4 +10,4 @@ RUN mkdir /app
 
 RUN pm2 flush
 
-CMD ["pm2", "logs"]
+CMD ["sh", "/app/init.sh"]

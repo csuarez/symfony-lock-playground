@@ -7,6 +7,7 @@ services:
       - memcached
     volumes:
       - .:/app/
+      - vendors:/app/vendor
   redis:
     image: redis
   redis2:
@@ -15,3 +16,5 @@ services:
     image: redis
   memcached:
     image: memcached
+volumes:
+  vendors:
